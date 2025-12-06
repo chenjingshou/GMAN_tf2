@@ -1,0 +1,45 @@
+# GMAN项目Conda环境配置文件 (GPU版本)
+# 适用于有NVIDIA GPU的服务器
+# 使用方法: conda env create -f environment_gpu.yaml
+
+name: gman
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.7.10
+  - pip=20.0.2
+  
+  # CUDA和cuDNN (TensorFlow 1.14需要CUDA 10.0)
+  - cudatoolkit=10.0.130
+  - cudnn=7.6.5
+  
+  # 数学和数据处理
+  - numpy=1.16.4
+  - pandas=0.24.2
+  - scipy=1.2.1
+  
+  # GPU版本TensorFlow
+  - pip:
+    - tensorflow-gpu==1.14.0  # GPU版本
+    
+    # 数据处理和存储
+    - tables==3.5.2           # HDF5文件读取
+    - h5py==2.9.0
+    
+    # 配置文件
+    - pyyaml==5.1
+    
+    # 机器学习工具
+    - scikit-learn==0.21.2
+    
+    # 可视化
+    - matplotlib==3.1.0
+    - seaborn==0.9.0
+    
+    # 进度条
+    - tqdm==4.32.1
+    
+    # 工具
+    - gdown
+    - gputil  # GPU监控

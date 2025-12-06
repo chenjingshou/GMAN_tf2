@@ -1,0 +1,38 @@
+Namespace(K=8, L=5, P=12, Q=12, SE_file='../data/METR-LA/SE(METR).txt', batch_size=32, d=8, log_file='./log/test_log', model_file='./models/GMAN.weights.h5', test_ratio=0.2, time_slot=5, traffic_file='../data/METR-LA/metr-la.h5', train_ratio=0.7, val_ratio=0.1)
+Model file: ./models/GMAN.weights.h5
+loading data...
+trainX: (23967, 12, 207)	trainY: (23967, 12, 207)
+valX:   (3405, 12, 207)		valY:   (3405, 12, 207)
+testX:  (6831, 12, 207)		testY:  (6831, 12, 207)
+data loaded!
+building model...
+model built!
+loading weights from ./models/GMAN.weights.h5...
+weights loaded!
+
+**** evaluating model ****
+evaluating on training set...
+evaluating on validation set...
+evaluating on test set...
+
+                MAE		RMSE		MAPE
+train            2.68		5.34		7.13%
+val              2.89		6.10		8.22%
+test             3.11		6.45		8.83%
+
+performance in each prediction step
+step: 01         2.45		4.41		6.19%
+step: 02         2.67		5.11		7.00%
+step: 03         2.83		5.59		7.63%
+step: 04         2.96		5.97		8.17%
+step: 05         3.07		6.29		8.62%
+step: 06         3.16		6.55		9.00%
+step: 07         3.24		6.76		9.32%
+step: 08         3.30		6.94		9.60%
+step: 09         3.36		7.09		9.83%
+step: 10         3.40		7.21		10.03%
+step: 11         3.45		7.31		10.22%
+step: 12         3.49		7.41		10.40%
+average:         3.11		6.39		8.83%
+
+Test completed!

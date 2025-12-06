@@ -1,0 +1,2 @@
+model_checkpoint_path: "GMAN_cpu_test"
+all_model_checkpoint_paths: "GMAN_cpu_test"

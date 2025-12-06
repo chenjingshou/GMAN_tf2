@@ -102,3 +102,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Datasets / large files
+data/METR-LA/pems-bay.h5

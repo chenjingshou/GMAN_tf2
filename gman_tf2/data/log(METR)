@@ -1,0 +1,7 @@
+K=8, L=5, P=12, Q=12, SE_file='data/SE(METR).txt', batch_size=16, d=8, decay_epoch=5, learning_rate=0.001, log_file='data/log(METR)', max_epoch=1000, model_file='data/GMAN(METR)', patience=10, test_ratio=0.2, time_slot=5, traffic_file='data/METR.h5', train_ratio=0.7, val_ratio=0.1
+loading data...
+trainX: (23967, 12, 207)	trainY: (23967, 12, 207)
+valX:   (3405, 12, 207)		valY:   (3405, 12, 207)
+testX:  (6831, 12, 207)		testY:  (6831, 12, 207)
+data loaded!
+compiling model...

@@ -1,0 +1,38 @@
+K=8, L=5, P=12, Q=12, SE_file='data/SE(METR).txt', batch_size=32, d=8, decay_epoch=5, learning_rate=0.001, log_file='data/log_cpu_test', max_epoch=50, model_file='data/GMAN_cpu_test', patience=5, test_ratio=0.2, time_slot=5, traffic_file='data/METR.h5', train_ratio=0.7, val_ratio=0.1
+loading data...
+trainX: (23967, 12, 207)	trainY: (23967, 12, 207)
+valX:   (3405, 12, 207)		valY:   (3405, 12, 207)
+testX:  (6831, 12, 207)		testY:  (6831, 12, 207)
+data loaded!
+compiling model...
+trainable parameters: 900,801
+model compiled!
+**** training model ****
+2025-10-08 21:17:47 | epoch: 0001/50, training time: 3600.9s, inference time: 205.4s
+train loss: 4.1246, val_loss: 3.2698
+val loss decrease from inf to 3.2698, saving model to data/GMAN_cpu_test
+2025-10-08 22:21:26 | epoch: 0002/50, training time: 3614.6s, inference time: 200.3s
+train loss: 3.4456, val_loss: 3.0721
+val loss decrease from 3.2698 to 3.0721, saving model to data/GMAN_cpu_test
+2025-10-08 23:42:31 | epoch: 0003/50, training time: 4612.2s, inference time: 250.1s
+train loss: 3.2425, val_loss: 3.0011
+val loss decrease from 3.0721 to 3.0011, saving model to data/GMAN_cpu_test
+2025-10-09 01:05:44 | epoch: 0004/50, training time: 4745.8s, inference time: 245.4s
+train loss: 3.1285, val_loss: 2.9655
+val loss decrease from 3.0011 to 2.9655, saving model to data/GMAN_cpu_test
+2025-10-09 02:28:03 | epoch: 0005/50, training time: 4689.1s, inference time: 246.9s
+train loss: 3.0744, val_loss: 2.9232
+val loss decrease from 2.9655 to 2.9232, saving model to data/GMAN_cpu_test
+2025-10-09 03:50:13 | epoch: 0006/50, training time: 4682.8s, inference time: 244.6s
+train loss: 2.9690, val_loss: 2.8928
+val loss decrease from 2.9232 to 2.8928, saving model to data/GMAN_cpu_test
+2025-10-09 05:12:16 | epoch: 0007/50, training time: 4673.9s, inference time: 246.4s
+train loss: 2.9244, val_loss: 2.9205
+2025-10-09 06:34:04 | epoch: 0008/50, training time: 4660.8s, inference time: 247.0s
+train loss: 2.8784, val_loss: 2.8722
+val loss decrease from 2.8928 to 2.8722, saving model to data/GMAN_cpu_test
+2025-10-09 07:56:47 | epoch: 0009/50, training time: 4712.7s, inference time: 248.0s
+train loss: 2.8404, val_loss: 2.8895
+2025-10-09 09:18:50 | epoch: 0010/50, training time: 4680.9s, inference time: 241.0s
+train loss: 2.8108, val_loss: 2.8367
+val loss decrease from 2.8722 to 2.8367, saving model to data/GMAN_cpu_test

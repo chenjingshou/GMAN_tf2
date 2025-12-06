@@ -1,129 +1,139 @@
-import math
+import os
 import argparse
-import utils
-import time
 import numpy as np
 import tensorflow as tf
+from tensorflow import keras
+from model import GMAN, MaskedMAELoss
+from utils import load_data, log_string, metric
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--P', type = int, default = 12,
-                    help = 'history steps')
-parser.add_argument('--Q', type = int, default = 12,
-                    help = 'prediction steps')
-parser.add_argument('--train_ratio', type = float, default = 0.7,
-                    help = 'training set [default : 0.7]')
-parser.add_argument('--val_ratio', type = float, default = 0.1,
-                    help = 'validation set [default : 0.1]')
-parser.add_argument('--test_ratio', type = float, default = 0.2,
-                    help = 'testing set [default : 0.2]')
-parser.add_argument('--batch_size', type = int, default = 32,
-                    help = 'batch size')
-parser.add_argument('--traffic_file', default = 'data/METR.h5',
-                    help = 'traffic file')
-parser.add_argument('--SE_file', default = 'data/SE(METR).txt',
-                    help = 'spatial emebdding file')
-parser.add_argument('--model_file', default = 'data/GMAN(METR)',
-                    help = 'pre-trained model')
-parser.add_argument('--log_file', default = 'data/log(METR)',
-                    help = 'log file')
-args = parser.parse_args()
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--P', type=int, default=12, help='history steps')
+    parser.add_argument('--Q', type=int, default=12, help='prediction steps')
+    parser.add_argument('--train_ratio', type=float, default=0.7, help='training set ratio')
+    parser.add_argument('--val_ratio', type=float, default=0.1, help='validation set ratio')
+    parser.add_argument('--test_ratio', type=float, default=0.2, help='testing set ratio')
+    parser.add_argument('--batch_size', type=int, default=16, help='batch size')
+    parser.add_argument('--traffic_file', default='../data/METR-LA/metr-la.h5', help='traffic file')
+    parser.add_argument('--SE_file', default='../data/METR-LA/SE(METR).txt', help='spatial embedding file')  # ✅ 改为SE_file
+    parser.add_argument('--model_file', default='./models/GMAN.weights.h5', help='path to saved model')
+    parser.add_argument('--log_file', default='./log/test_log', help='log file')
+    parser.add_argument('--time_slot', type=int, default=5, help='time interval')
+    parser.add_argument('--K', type=int, default=8, help='number of attention heads')
+    parser.add_argument('--d', type=int, default=8, help='dims of each head attention outputs')
+    parser.add_argument('--L', type=int, default=5, help='number of STAtt Blocks')
+    args = parser.parse_args()
 
-start = time.time()
+    if not os.path.exists('log'):
+        os.makedirs('log')
 
-log = open(args.log_file, 'w')
-utils.log_string(log, str(args)[10 : -1])
+    log = open(args.log_file, 'w')
+    log_string(log, str(args))
 
-# load data
-utils.log_string(log, 'loading data...')
-(trainX, trainTE, trainY, valX, valTE, valY, testX, testTE, testY,
- SE, mean, std) = utils.loadData(args)
-num_train, num_val, num_test = trainX.shape[0], valX.shape[0], testX.shape[0]
-utils.log_string(log, 'trainX: %s\ttrainY: %s' % (trainX.shape, trainY.shape))
-utils.log_string(log, 'valX:   %s\t\tvalY:   %s' % (valX.shape, valY.shape))
-utils.log_string(log, 'testX:  %s\t\ttestY:  %s' % (testX.shape, testY.shape))
-utils.log_string(log, 'data loaded!')
+    # 检查模型文件是否存在
+    if not os.path.exists(args.model_file):
+        log_string(log, f'Error: Model file not found: {args.model_file}')
+        log.close()
+        return
 
-# test model
-utils.log_string(log, '**** testing model ****')
-utils.log_string(log, 'loading model from %s' % args.model_file)
-graph = tf.Graph()
-with graph.as_default():
-    saver = tf.compat.v1.train.import_meta_graph(args.model_file + '.meta')
-config = tf.compat.v1.ConfigProto()
-config.gpu_options.allow_growth = True
-with tf.Session(graph = graph, config = config) as sess:
-    saver.restore(sess, args.model_file)
-    parameters = 0
-    for variable in tf.compat.v1.trainable_variables():
-        parameters += np.product([x.value for x in variable.get_shape()])
-    utils.log_string(log, 'trainable parameters: {:,}'.format(parameters))
-    pred = graph.get_collection(name = 'pred')[0]
-    utils.log_string(log, 'model restored!')
-    utils.log_string(log, 'evaluating...')
-    trainPred = []
-    num_batch = math.ceil(num_train / args.batch_size)
-    for batch_idx in range(num_batch):
-        start_idx = batch_idx * args.batch_size
-        end_idx = min(num_train, (batch_idx + 1) * args.batch_size)
-        feed_dict = {
-            'X:0': trainX[start_idx : end_idx],
-            'TE:0': trainTE[start_idx : end_idx],
-            'is_training:0': False}
-        pred_batch = sess.run(pred, feed_dict = feed_dict)
-        trainPred.append(pred_batch)
-    trainPred = np.concatenate(trainPred, axis = 0)
-    valPred = []
-    num_batch = math.ceil(num_val / args.batch_size)
-    for batch_idx in range(num_batch):
-        start_idx = batch_idx * args.batch_size
-        end_idx = min(num_val, (batch_idx + 1) * args.batch_size)
-        feed_dict = {
-            'X:0': valX[start_idx : end_idx],
-            'TE:0': valTE[start_idx : end_idx],
-            'is_training:0': False}
-        pred_batch = sess.run(pred, feed_dict = feed_dict)
-        valPred.append(pred_batch)
-    valPred = np.concatenate(valPred, axis = 0)
-    testPred = []
-    num_batch = math.ceil(num_test / args.batch_size)
-    start_test = time.time()
-    for batch_idx in range(num_batch):
-        start_idx = batch_idx * args.batch_size
-        end_idx = min(num_test, (batch_idx + 1) * args.batch_size)
-        feed_dict = {
-            'X:0': testX[start_idx : end_idx],
-            'TE:0': testTE[start_idx : end_idx],
-            'is_training:0': False}
-        pred_batch = sess.run(pred, feed_dict = feed_dict)
-        testPred.append(pred_batch)
-    end_test = time.time()
-    testPred = np.concatenate(testPred, axis = 0)
-train_mae, train_rmse, train_mape = utils.metric(trainPred, trainY)
-val_mae, val_rmse, val_mape = utils.metric(valPred, valY)
-test_mae, test_rmse, test_mape = utils.metric(testPred, testY)
-utils.log_string(log, 'testing time: %.1fs' % (end_test - start_test))
-utils.log_string(log, '                MAE\t\tRMSE\t\tMAPE')
-utils.log_string(log, 'train            %.2f\t\t%.2f\t\t%.2f%%' %
-                 (train_mae, train_rmse, train_mape * 100))
-utils.log_string(log, 'val              %.2f\t\t%.2f\t\t%.2f%%' %
-                 (val_mae, val_rmse, val_mape * 100))
-utils.log_string(log, 'test             %.2f\t\t%.2f\t\t%.2f%%' %
-                 (test_mae, test_rmse, test_mape * 100))
-utils.log_string(log, 'performance in each prediction step')
-MAE, RMSE, MAPE = [], [], []
-for q in range(args.Q):
-    mae, rmse, mape = utils.metric(testPred[:, q], testY[:, q])
-    MAE.append(mae)
-    RMSE.append(rmse)
-    MAPE.append(mape)
-    utils.log_string(log, 'step: %02d         %.2f\t\t%.2f\t\t%.2f%%' %
-                     (q + 1, mae, rmse, mape * 100))
-average_mae = np.mean(MAE)
-average_rmse = np.mean(RMSE)
-average_mape = np.mean(MAPE)
-utils.log_string(
-    log, 'average:         %.2f\t\t%.2f\t\t%.2f%%' %
-    (average_mae, average_rmse, average_mape * 100))
-end = time.time()
-utils.log_string(log, 'total time: %.1fmin' % ((end - start) / 60))
-log.close()
+    log_string(log, 'loading data...')
+    (trainX, trainTE, trainY, valX, valTE, valY, testX, testTE, testY,
+     SE, mean, std) = load_data(args)
+    
+    log_string(log, f'trainX: {trainX.shape}\ttrainY: {trainY.shape}')
+    log_string(log, f'valX:   {valX.shape}\t\tvalY:   {valY.shape}')
+    log_string(log, f'testX:  {testX.shape}\t\ttestY:  {testY.shape}')
+    log_string(log, 'data loaded!')
+
+    # 创建数据集
+    train_ds = tf.data.Dataset.from_tensor_slices(((trainX, trainTE), trainY))
+    train_ds = train_ds.batch(args.batch_size)
+    
+    val_ds = tf.data.Dataset.from_tensor_slices(((valX, valTE), valY))
+    val_ds = val_ds.batch(args.batch_size)
+    
+    test_ds = tf.data.Dataset.from_tensor_slices(((testX, testTE), testY))
+    test_ds = test_ds.batch(args.batch_size)
+
+    log_string(log, 'loading model...')
+    # ✅ 添加bn参数，与训练时保持一致
+    model = GMAN(args, SE, mean, std, bn=True)
+    
+    # 加载权重前需要先构建模型
+    try:
+        dummy_batch = next(iter(test_ds.take(1)))
+        _ = model(dummy_batch[0], training=False)
+        log_string(log, 'model built successfully!')
+    except Exception as e:
+        log_string(log, f'Warning: Could not build model: {e}')
+
+    # 加载权重
+    try:
+        model.load_weights(args.model_file)
+        log_string(log, f'model weights loaded from {args.model_file}')
+    except Exception as e:
+        log_string(log, f'Error loading weights: {e}')
+        log.close()
+        return
+
+    # ✅ 使用正确的loss和optimizer
+    optimizer = tf.keras.optimizers.Adam()
+    model.compile(
+        optimizer=optimizer, 
+        loss=MaskedMAELoss(),
+        metrics=['mae', keras.metrics.RootMeanSquaredError(name='rmse'), 'mape']
+    )
+    
+    log_string(log, 'model compiled!')
+    
+    # 计算参数量
+    try:
+        total_params = model.count_params()
+        log_string(log, f'trainable parameters: {total_params:,}')
+    except:
+        pass
+
+    log_string(log, '**** evaluating model ****')
+    
+    # 评估训练集
+    train_metrics = model.evaluate(train_ds, verbose=0)
+    log_string(log, f'train - MAE: {train_metrics[1]:.2f}, RMSE: {train_metrics[2]:.2f}, MAPE: {train_metrics[3]*100:.2f}%')
+    
+    # 评估验证集
+    val_metrics = model.evaluate(val_ds, verbose=0)
+    log_string(log, f'val   - MAE: {val_metrics[1]:.2f}, RMSE: {val_metrics[2]:.2f}, MAPE: {val_metrics[3]*100:.2f}%')
+    
+    # 评估测试集
+    test_metrics = model.evaluate(test_ds, verbose=0)
+    log_string(log, f'test  - MAE: {test_metrics[1]:.2f}, RMSE: {test_metrics[2]:.2f}, MAPE: {test_metrics[3]*100:.2f}%')
+
+    log_string(log, '\n                MAE\t\tRMSE\t\tMAPE')
+    log_string(log, f'train            {train_metrics[1]:.2f}\t\t{train_metrics[2]:.2f}\t\t{train_metrics[3]*100:.2f}%')
+    log_string(log, f'val              {val_metrics[1]:.2f}\t\t{val_metrics[2]:.2f}\t\t{val_metrics[3]*100:.2f}%')
+    log_string(log, f'test             {test_metrics[1]:.2f}\t\t{test_metrics[2]:.2f}\t\t{test_metrics[3]*100:.2f}%')
+
+    log_string(log, '\nperformance in each prediction step')
+    
+    # 获取测试集预测结果
+    test_pred = model.predict(test_ds, verbose=0)
+    
+    MAE, RMSE, MAPE = [], [], []
+    for q in range(args.Q):
+        mae, rmse, mape = metric(test_pred[:, q], testY[:, q])
+        MAE.append(mae)
+        RMSE.append(rmse)
+        MAPE.append(mape)
+        log_string(log, f'step: {q + 1:02d}         {mae:.2f}\t\t{rmse:.2f}\t\t{mape * 100:.2f}%')
+    
+    average_mae = np.mean(MAE)
+    average_rmse = np.mean(RMSE)
+    average_mape = np.mean(MAPE)
+    log_string(
+        log, f'average:         {average_mae:.2f}\t\t{average_rmse:.2f}\t\t{average_mape * 100:.2f}%'
+    )
+
+    log.close()
+    print(f'\nTest completed! Results saved to {args.log_file}')
+
+if __name__ == '__main__':
+    main()

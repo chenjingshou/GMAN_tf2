@@ -1,0 +1,122 @@
+/mnt/yunpan/anaconda3/envs/gman/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:516: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint8 = np.dtype([("qint8", np.int8, 1)])
+/mnt/yunpan/anaconda3/envs/gman/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:517: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint8 = np.dtype([("quint8", np.uint8, 1)])
+/mnt/yunpan/anaconda3/envs/gman/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:518: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint16 = np.dtype([("qint16", np.int16, 1)])
+/mnt/yunpan/anaconda3/envs/gman/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:519: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint16 = np.dtype([("quint16", np.uint16, 1)])
+/mnt/yunpan/anaconda3/envs/gman/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:520: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint32 = np.dtype([("qint32", np.int32, 1)])
+/mnt/yunpan/anaconda3/envs/gman/lib/python3.7/site-packages/tensorflow/python/framework/dtypes.py:525: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  np_resource = np.dtype([("resource", np.ubyte, 1)])
+/mnt/yunpan/anaconda3/envs/gman/lib/python3.7/site-packages/tensorboard/compat/tensorflow_stub/dtypes.py:541: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint8 = np.dtype([("qint8", np.int8, 1)])
+/mnt/yunpan/anaconda3/envs/gman/lib/python3.7/site-packages/tensorboard/compat/tensorflow_stub/dtypes.py:542: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint8 = np.dtype([("quint8", np.uint8, 1)])
+/mnt/yunpan/anaconda3/envs/gman/lib/python3.7/site-packages/tensorboard/compat/tensorflow_stub/dtypes.py:543: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint16 = np.dtype([("qint16", np.int16, 1)])
+/mnt/yunpan/anaconda3/envs/gman/lib/python3.7/site-packages/tensorboard/compat/tensorflow_stub/dtypes.py:544: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_quint16 = np.dtype([("quint16", np.uint16, 1)])
+/mnt/yunpan/anaconda3/envs/gman/lib/python3.7/site-packages/tensorboard/compat/tensorflow_stub/dtypes.py:545: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  _np_qint32 = np.dtype([("qint32", np.int32, 1)])
+/mnt/yunpan/anaconda3/envs/gman/lib/python3.7/site-packages/tensorboard/compat/tensorflow_stub/dtypes.py:550: FutureWarning: Passing (type, 1) or '1type' as a synonym of type is deprecated; in a future version of numpy, it will be understood as (type, (1,)) / '(1,)type'.
+  np_resource = np.dtype([("resource", np.ubyte, 1)])
+K=8, L=5, P=12, Q=12, SE_file='data/SE(METR).txt', batch_size=32, d=8, decay_epoch=5, learning_rate=0.001, log_file='logs/training_20251008_223056.log', max_epoch=50, model_file='models/GMAN_20251008_223056', patience=5, test_ratio=0.2, time_slot=5, traffic_file='data/METR.h5', train_ratio=0.7, val_ratio=0.1
+loading data...
+trainX: (23967, 12, 207)	trainY: (23967, 12, 207)
+valX:   (3405, 12, 207)		valY:   (3405, 12, 207)
+testX:  (6831, 12, 207)		testY:  (6831, 12, 207)
+data loaded!
+compiling model...
+WARNING:tensorflow:From /mnt/yunpan/anaconda3/envs/gman/lib/python3.7/site-packages/tensorflow/python/ops/init_ops.py:1251: calling VarianceScaling.__init__ (from tensorflow.python.ops.init_ops) with dtype is deprecated and will be removed in a future version.
+Instructions for updating:
+Call initializer instance with the dtype argument instead of passing it to the constructor
+trainable parameters: 900,801
+model compiled!
+2025-10-08 22:31:21.188404: I tensorflow/core/platform/cpu_feature_guard.cc:142] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 AVX512F FMA
+2025-10-08 22:31:21.203692: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 2400000000 Hz
+2025-10-08 22:31:21.206994: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x5589e04347e0 executing computations on platform Host. Devices:
+2025-10-08 22:31:21.207138: I tensorflow/compiler/xla/service/service.cc:175]   StreamExecutor device (0): <undefined>, <undefined>
+2025-10-08 22:31:21.210341: I tensorflow/stream_executor/platform/default/dso_loader.cc:42] Successfully opened dynamic library libcuda.so.1
+2025-10-08 22:31:21.241324: E tensorflow/stream_executor/cuda/cuda_driver.cc:318] failed call to cuInit: CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected
+2025-10-08 22:31:21.241538: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:169] retrieving CUDA diagnostic information for host: softengine-KVM
+2025-10-08 22:31:21.241579: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:176] hostname: softengine-KVM
+2025-10-08 22:31:21.241761: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:200] libcuda reported version is: 550.54.15
+2025-10-08 22:31:21.241823: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:204] kernel reported version is: 550.54.15
+2025-10-08 22:31:21.241859: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:310] kernel version seems to match DSO: 550.54.15
+2025-10-08 22:31:25.535681: W tensorflow/compiler/jit/mark_for_compilation_pass.cc:1412] (One-time warning): Not using XLA:CPU for cluster because envvar TF_XLA_FLAGS=--tf_xla_cpu_global_jit was not set.  If you want XLA:CPU, either set that envvar, or use experimental_jit_scope to enable XLA:CPU.  To confirm that XLA is active, pass --vmodule=xla_compilation_cache=1 (as a proper command-line flag, not via TF_XLA_FLAGS) or set the envvar XLA_FLAGS=--xla_hlo_profile.
+**** training model ****
+2025-10-08 23:56:33 | epoch: 0001/50, training time: 4858.9s, inference time: 248.2s
+train loss: 4.1050, val_loss: 3.1892
+val loss decrease from inf to 3.1892, saving model to models/GMAN_20251008_223056
+2025-10-09 01:19:34 | epoch: 0002/50, training time: 4731.7s, inference time: 245.5s
+train loss: 3.4330, val_loss: 3.1754
+val loss decrease from 3.1892 to 3.1754, saving model to models/GMAN_20251008_223056
+2025-10-09 02:41:46 | epoch: 0003/50, training time: 4683.7s, inference time: 245.8s
+train loss: 3.2380, val_loss: 2.9763
+val loss decrease from 3.1754 to 2.9763, saving model to models/GMAN_20251008_223056
+2025-10-09 04:03:50 | epoch: 0004/50, training time: 4675.4s, inference time: 245.7s
+train loss: 3.1540, val_loss: 2.9658
+val loss decrease from 2.9763 to 2.9658, saving model to models/GMAN_20251008_223056
+2025-10-09 05:25:55 | epoch: 0005/50, training time: 4677.8s, inference time: 244.4s
+train loss: 3.0635, val_loss: 2.9226
+val loss decrease from 2.9658 to 2.9226, saving model to models/GMAN_20251008_223056
+2025-10-09 06:47:57 | epoch: 0006/50, training time: 4670.8s, inference time: 248.6s
+train loss: 2.9703, val_loss: 2.9579
+2025-10-09 08:10:31 | epoch: 0007/50, training time: 4708.2s, inference time: 245.2s
+train loss: 2.9267, val_loss: 2.8745
+val loss decrease from 2.9226 to 2.8745, saving model to models/GMAN_20251008_223056
+2025-10-09 09:32:23 | epoch: 0008/50, training time: 4665.5s, inference time: 244.8s
+train loss: 2.8946, val_loss: 2.8752
+2025-10-09 10:44:32 | epoch: 0009/50, training time: 4139.2s, inference time: 189.3s
+train loss: 2.8538, val_loss: 2.8559
+val loss decrease from 2.8745 to 2.8559, saving model to models/GMAN_20251008_223056
+2025-10-09 11:49:55 | epoch: 0010/50, training time: 3727.4s, inference time: 193.7s
+train loss: 2.8219, val_loss: 2.8492
+val loss decrease from 2.8559 to 2.8492, saving model to models/GMAN_20251008_223056
+2025-10-09 12:54:59 | epoch: 0011/50, training time: 3713.6s, inference time: 187.7s
+train loss: 2.7554, val_loss: 2.8508
+2025-10-09 14:00:45 | epoch: 0012/50, training time: 3749.7s, inference time: 196.1s
+train loss: 2.7227, val_loss: 2.8691
+2025-10-09 15:06:06 | epoch: 0013/50, training time: 3727.5s, inference time: 193.1s
+train loss: 2.6967, val_loss: 2.8460
+val loss decrease from 2.8492 to 2.8460, saving model to models/GMAN_20251008_223056
+2025-10-09 16:11:51 | epoch: 0014/50, training time: 3748.5s, inference time: 193.8s
+train loss: 2.6744, val_loss: 2.8742
+2025-10-09 17:17:44 | epoch: 0015/50, training time: 3770.7s, inference time: 182.5s
+train loss: 2.6516, val_loss: 2.8686
+2025-10-09 18:23:11 | epoch: 0016/50, training time: 3732.0s, inference time: 194.7s
+train loss: 2.6098, val_loss: 2.8738
+2025-10-09 19:25:06 | epoch: 0017/50, training time: 3530.7s, inference time: 184.3s
+train loss: 2.5895, val_loss: 2.8865
+2025-10-09 20:26:03 | epoch: 0018/50, training time: 3468.7s, inference time: 187.7s
+train loss: 2.5751, val_loss: 2.8935
+early stop at epoch: 0018
+**** testing model ****
+loading model from models/GMAN_20251008_223056
+WARNING:tensorflow:From /mnt/yunpan/anaconda3/envs/gman/lib/python3.7/site-packages/tensorflow/python/training/saver.py:1276: checkpoint_exists (from tensorflow.python.training.checkpoint_management) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use standard file APIs to check for files with this prefix.
+model restored!
+evaluating...
+testing time: 358.1s
+                MAE		RMSE		MAPE
+train            2.57		5.06		6.77%
+val              2.88		6.02		8.14%
+test             3.09		6.36		8.72%
+performance in each prediction step
+step: 01         2.47		4.43		6.38%
+step: 02         2.67		5.08		7.07%
+step: 03         2.82		5.53		7.63%
+step: 04         2.94		5.89		8.10%
+step: 05         3.04		6.18		8.50%
+step: 06         3.13		6.43		8.84%
+step: 07         3.20		6.63		9.13%
+step: 08         3.27		6.81		9.39%
+step: 09         3.32		6.96		9.61%
+step: 10         3.37		7.09		9.81%
+step: 11         3.41		7.21		10.01%
+step: 12         3.46		7.31		10.19%
+average:         3.09		6.30		8.72%
+total time: 1346.3min
