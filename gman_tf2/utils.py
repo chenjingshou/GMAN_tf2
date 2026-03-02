@@ -55,7 +55,10 @@ def seq2instance(data, P, Q):
 def load_data(args):
     """
     Load and preprocess data.
-    参照原始模板：使用Time.freq.delta.total_seconds()计算时间
+    参照原始模板：使用Time.freq.delta.total_seconds()计算时间。
+
+    增强：若提供 Fréchet embedding（或指定维度），同时返回对齐的 per-sample 嵌入，
+    以便模型输入 ((X, TE, X_frechet), Y)。如果没有提供文件，则返回全零占位。
     """
     # 验证文件存在
     if not os.path.exists(args.traffic_file):
@@ -140,5 +143,53 @@ def load_data(args):
     test_te = seq2instance(Time[-test_steps:], args.P, args.Q)
     test_te = np.concatenate(test_te, axis=1).astype(np.int32)
 
-    return (trainX, train_te, trainY, valX, val_te, valY, testX, test_te, testY,
-            SE, mean, std)
+    # Fréchet embedding: optional external file, otherwise zeros placeholder
+    frechet_dim = getattr(args, "frechet_dim", 16)
+    frechet_file = getattr(args, "frechet_file", None)
+    if frechet_file and os.path.exists(frechet_file):
+        frechet_all = np.load(frechet_file)
+        if frechet_all.ndim == 1:
+            frechet_all = frechet_all[:, None]
+        # 对齐长度：截断或补齐
+        if frechet_all.shape[0] < num_step:
+            pad = np.zeros((num_step - frechet_all.shape[0], frechet_all.shape[1]), dtype=frechet_all.dtype)
+            frechet_all = np.concatenate([frechet_all, pad], axis=0)
+        elif frechet_all.shape[0] > num_step:
+            frechet_all = frechet_all[:num_step]
+        frechet_all = frechet_all.astype(np.float32)
+        if not getattr(args, "silent", False):
+            print(f"Loaded Fréchet embeddings: {frechet_all.shape}")
+    else:
+        frechet_all = np.zeros((num_step, frechet_dim), dtype=np.float32)
+        if frechet_file:
+            print(f"Warning: frechet_file '{frechet_file}' not found. Using zeros placeholder with dim={frechet_dim}.")
+
+    frechet_train = frechet_all[:train_steps]
+    frechet_val = frechet_all[train_steps: train_steps + val_steps]
+    frechet_test = frechet_all[-test_steps:]
+
+    def frechet_seq_to_sample(fr):
+        fx, _ = seq2instance(fr, args.P, args.Q)
+        return np.mean(fx, axis=1)  # (num_samples, frechet_dim)
+
+    train_frechet = frechet_seq_to_sample(frechet_train)
+    val_frechet = frechet_seq_to_sample(frechet_val)
+    test_frechet = frechet_seq_to_sample(frechet_test)
+
+    return (
+        trainX,
+        train_te,
+        train_frechet,
+        trainY,
+        valX,
+        val_te,
+        val_frechet,
+        valY,
+        testX,
+        test_te,
+        test_frechet,
+        testY,
+        SE,
+        mean,
+        std,
+    )
